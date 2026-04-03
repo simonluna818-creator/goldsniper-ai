@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import WelcomeModal from "@/components/WelcomeModal";
 import Ticker from "@/components/Ticker";
 import SignalCard from "@/components/SignalCard";
@@ -31,15 +32,17 @@ function useCounter(end: number, duration = 1800) {
 }
 
 export default function Home() {
+  const router = useRouter();
   const accuracy = useCounter(83);
   const signals  = useCounter(11, 1200);
   const traders  = useCounter(2847, 2000);
 
+  const goLogin = () => router.push("/login");
+  const goPricing = () => router.push("/pricing");
+
   return (
     <>
       <WelcomeModal />
-
-      {/* TICKER */}
       <Ticker />
 
       {/* NAV */}
@@ -57,15 +60,17 @@ export default function Home() {
         </div>
         <div className="flex items-center gap-6">
           {["Señales","Precios","YouTube Live"].map((l) => (
-            <a key={l} className="text-sm cursor-pointer" style={{ color: "#707890" }}>{l}</a>
+            <a key={l} className="text-sm cursor-pointer" style={{ color: "#707890" }}
+              onClick={l === "Precios" ? goPricing : undefined}>{l}</a>
           ))}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
             style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)" }}>
             <div className="animate-livepulse rounded-full" style={{ width: 6, height: 6, background: "#22c55e" }} />
             <span className="font-mono text-xs" style={{ color: "#22c55e" }}>EN VIVO</span>
           </div>
-          <button className="px-5 py-2.5 rounded-lg font-syne font-bold text-black text-sm"
-            style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>
+          <button onClick={goLogin}
+            className="px-5 py-2.5 rounded-lg font-syne font-bold text-black text-sm"
+            style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", cursor: "pointer" }}>
             Empezar Gratis
           </button>
         </div>
@@ -73,18 +78,15 @@ export default function Home() {
 
       {/* HERO */}
       <section className="relative px-6 py-20 overflow-hidden">
-        {/* Grid bg */}
         <div className="absolute inset-0 pointer-events-none" style={{
           backgroundImage: "linear-gradient(rgba(245,158,11,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,0.04) 1px,transparent 1px)",
           backgroundSize: "60px 60px",
           maskImage: "radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%)"
         }} />
-        {/* Orbs */}
         <div className="absolute pointer-events-none" style={{ width: 500, height: 500, background: "rgba(245,158,11,0.07)", borderRadius: "50%", filter: "blur(80px)", top: -200, left: -100 }} />
         <div className="absolute pointer-events-none" style={{ width: 400, height: 400, background: "rgba(245,100,11,0.05)", borderRadius: "50%", filter: "blur(80px)", top: -100, right: -100 }} />
 
         <div className="relative max-w-5xl mx-auto grid grid-cols-2 gap-12 items-center">
-          {/* Left */}
           <div>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
               style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)" }}>
@@ -101,12 +103,14 @@ export default function Home() {
               Señales BUY/SELL en tiempo real directo a tu Telegram. Transmisión en vivo en YouTube.
             </p>
             <div className="flex gap-3 flex-wrap mb-6">
-              <button className="px-8 py-4 rounded-xl font-syne font-bold text-black"
-                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", fontSize: 15 }}>
+              <button onClick={goLogin}
+                className="px-8 py-4 rounded-xl font-syne font-bold text-black"
+                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", fontSize: 15, cursor: "pointer" }}>
                 🚀 7 Días Gratis
               </button>
-              <button className="px-7 py-4 rounded-xl font-medium text-sm"
-                style={{ background: "transparent", color: "#e0d9c8", border: "1px solid rgba(255,255,255,0.12)" }}>
+              <button onClick={() => window.open("https://youtube.com", "_blank")}
+                className="px-7 py-4 rounded-xl font-medium text-sm"
+                style={{ background: "transparent", color: "#e0d9c8", border: "1px solid rgba(255,255,255,0.12)", cursor: "pointer" }}>
                 ▶ Ver en vivo
               </button>
             </div>
@@ -119,8 +123,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-
-          {/* Right — Signal Card */}
           <SignalCard />
         </div>
       </section>
@@ -130,9 +132,9 @@ export default function Home() {
         <div className="max-w-4xl mx-auto grid grid-cols-4 gap-6 text-center">
           {[
             { val: `${accuracy}%`, label: "Precisión promedio" },
-            { val: `${signals}`, label: "Señales hoy" },
+            { val: `${signals}`,   label: "Señales hoy" },
             { val: `${traders.toLocaleString()}`, label: "Traders activos" },
-            { val: "24/7", label: "Monitoreo en vivo" },
+            { val: "24/7",         label: "Monitoreo en vivo" },
           ].map((s) => (
             <div key={s.label}>
               <div className="font-syne font-extrabold gold-text" style={{ fontSize: "clamp(28px,4vw,44px)" }}>{s.val}</div>
@@ -185,9 +187,8 @@ export default function Home() {
             Empieza gratis. Escala cuando quieras.
           </h2>
           <p className="mb-12 text-sm" style={{ color: "#5a6070" }}>7 días de prueba completa. Sin tarjeta. Sin riesgo.</p>
-
           <div className="grid grid-cols-3 gap-4 text-left">
-            {/* Free */}
+            {/* FREE */}
             <div className="rounded-2xl p-7" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}>
               <div className="font-mono text-xs mb-3" style={{ color: "#5a6070", letterSpacing: "0.1em" }}>GRATIS</div>
               <div className="font-syne font-extrabold text-white mb-4" style={{ fontSize: 36 }}>$0<span className="text-sm font-normal" style={{ color: "#5a6070" }}>/mes</span></div>
@@ -202,12 +203,11 @@ export default function Home() {
                   <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="#3a4050" strokeWidth="2" strokeLinecap="round"/></svg>{f}
                 </div>
               ))}
-              <button className="w-full py-3.5 rounded-xl font-medium text-sm mt-5"
-                style={{ background: "transparent", color: "#e0d9c8", border: "1px solid rgba(255,255,255,0.12)" }}>
+              <button onClick={goLogin} className="w-full py-3.5 rounded-xl font-medium text-sm mt-5"
+                style={{ background: "transparent", color: "#e0d9c8", border: "1px solid rgba(255,255,255,0.12)", cursor: "pointer" }}>
                 Empezar gratis
               </button>
             </div>
-
             {/* PRO */}
             <div className="rounded-2xl p-7 relative" style={{ background: "rgba(245,158,11,0.06)", border: "2px solid #f59e0b" }}>
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 font-syne font-extrabold text-black text-xs px-4 py-1.5 rounded-full"
@@ -221,11 +221,10 @@ export default function Home() {
                   <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>{f}
                 </div>
               ))}
-              <button className="w-full py-3.5 rounded-xl font-syne font-bold text-black text-sm mt-5"
-                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>7 días gratis →</button>
+              <button onClick={goPricing} className="w-full py-3.5 rounded-xl font-syne font-bold text-black text-sm mt-5"
+                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", cursor: "pointer" }}>7 días gratis →</button>
             </div>
-
-            {/* Elite */}
+            {/* ELITE */}
             <div className="rounded-2xl p-7" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(168,85,247,0.2)" }}>
               <div className="font-mono text-xs mb-3" style={{ color: "#a855f7", letterSpacing: "0.1em" }}>ELITE</div>
               <div className="font-syne font-extrabold text-white mb-4" style={{ fontSize: 36 }}>$79<span className="text-sm font-normal" style={{ color: "#5a6070" }}>/mes</span></div>
@@ -235,14 +234,14 @@ export default function Home() {
                   <svg width="13" height="13" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#a855f7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>{f}
                 </div>
               ))}
-              <button className="w-full py-3.5 rounded-xl font-medium text-sm mt-5"
-                style={{ background: "transparent", color: "#a855f7", border: "1px solid rgba(168,85,247,0.3)" }}>7 días gratis</button>
+              <button onClick={goPricing} className="w-full py-3.5 rounded-xl font-medium text-sm mt-5"
+                style={{ background: "transparent", color: "#a855f7", border: "1px solid rgba(168,85,247,0.3)", cursor: "pointer" }}>7 días gratis</button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA FINAL */}
+      {/* CTA */}
       <section className="px-6 py-20 text-center relative overflow-hidden">
         <div className="absolute pointer-events-none" style={{ width: 600, height: 300, background: "rgba(245,158,11,0.06)", borderRadius: "50%", filter: "blur(80px)", top: -50, left: "50%", transform: "translateX(-50%)" }} />
         <div className="relative max-w-xl mx-auto">
@@ -250,14 +249,13 @@ export default function Home() {
             Empieza hoy.<br /><span className="gold-text">Gratis.</span>
           </h2>
           <p className="mb-8 text-sm" style={{ color: "#5a6070" }}>7 días de acceso completo. Sin tarjeta de crédito.</p>
-          <button className="px-14 py-5 rounded-xl font-syne font-bold text-black"
-            style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", fontSize: 17 }}>
+          <button onClick={goLogin} className="px-14 py-5 rounded-xl font-syne font-bold text-black"
+            style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)", fontSize: 17, cursor: "pointer" }}>
             Crear cuenta gratis →
           </button>
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer style={{ borderTop: "1px solid rgba(255,255,255,0.04)", padding: "20px 24px", textAlign: "center" }}>
         <span className="text-xs" style={{ color: "#3a4050" }}>© 2026 GoldSniper AI · Los mercados financieros implican riesgo. Invierte con responsabilidad.</span>
       </footer>
